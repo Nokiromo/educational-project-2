@@ -37,7 +37,7 @@ window.addEventListener('DOMContentLoaded', () =>{
 
 
     // timer
-    const deadLine = '2024-08-15';
+    const deadLine = '2025-08-15';
     
     function getTimeRemaining(endtime){
         let days,hours,minutes,seconds;
@@ -94,5 +94,55 @@ window.addEventListener('DOMContentLoaded', () =>{
     }
 
 setClock('.timer', deadLine)
+
+
+
+// Modal
+const modalWindow = document.querySelector('.modal')
+const contactBtn = document.querySelectorAll('[data-modal]')
+const closeBtn = document.querySelector('[data-close]')
+
+
+
+
+function modalOpen ()   {
+    modalWindow.classList.add('show');
+    modalWindow.classList.remove('hide')
+    document.body.style.overflow = 'hidden'
+    clearInterval(modalTimerId) 
+} 
+function modalClose(){
+    modalWindow.classList.remove('show');
+    modalWindow.classList.add('hide')
+    document.body.style.overflow = '' 
+}
+    contactBtn.forEach(btn => {
+    btn.addEventListener('click', modalOpen)
+    });
+
+modalWindow.addEventListener('click', modalClose)
+  modalWindow.addEventListener('clisck', (e) =>{
+    if (e.target === modalWindow){
+        modalClose()
+    }  
+})
+
+document.addEventListener('keydown', (e) =>{
+    if(e.code === 'Escape' && modalWindow.classList.contains('show')){
+        modalClose()
+    }
+})
+const modalTimerId =  setTimeout(modalOpen, 5000);
+
+function showModalByScroll() {
+     if(window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1){
+        modalOpen()
+        window.removeEventListener('scroll',showModalByScroll)
+    }
+}
+
+window.addEventListener('scroll',showModalByScroll)
+
+
 
 })
