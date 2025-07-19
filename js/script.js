@@ -147,7 +147,7 @@ window.addEventListener('scroll',showModalByScroll)
 
 
 class Menu {
-    constructor(src, alt, name, text, price, parentSelector){
+    constructor(src, alt, name, text, price, parentSelector, ...classes){
         this.src = src;
         this.alt = alt;
         this.name = name;
@@ -156,6 +156,7 @@ class Menu {
         this.transfer = 42;
         this.changeToUAH()
         this.parent = document.querySelector(parentSelector)
+        this.classes = classes
     }
     changeToUAH(){
         this.price = this.price * this.transfer
@@ -163,7 +164,15 @@ class Menu {
 
     render(){
         const a = document.createElement('div')
-        a.innerHTML = `<div class="menu__item">
+        if(this.classes.length === 0){
+            this.a = 'menu__item'
+            a.classList.add(this.a)
+        }
+        else{
+            this.classes.forEach(className => a.classList.add(className))
+        }
+        
+        a.innerHTML = `
                     <img src=${this.src} alt=${this.alt}>
                     <h3 class="menu__item-subtitle">${this.name}</h3>
                     <div class="menu__item-descr">${this.text}</div>
@@ -171,7 +180,7 @@ class Menu {
                     <div class="menu__item-price">
                         <div class="menu__item-cost">Price:</div>
                         <div class="menu__item-total"><span>${this.price}</span> UAH/day</div>
-                    </div>`
+                    `
 
         this.parent.append(a)
     }
@@ -184,7 +193,8 @@ new Menu(
     '"Fitness" Menu',
     'Fitness" menu is a new approach to cooking: more fresh vegetables and fruits. <br> A product for active and healthy people. A completely new offering with optimal price and high quality!',
     9,
-    '.menu .container'
+    '.menu .container',
+   
 ).render()
 new Menu(
     "img/tabs/elite.jpg",
@@ -192,7 +202,8 @@ new Menu(
     '"Premium" Menu',
     'In the "Premium" menu we use not only beautiful packaging design, but also high-quality dish execution.<br> Red fish, seafood, fruits — restaurant-style menu without going to a restaurant!',
     12,
-    '.menu .container'
+    '.menu .container',
+    'menu__item'
 ).render()
 new Menu(
     "img/tabs/post.jpg",
@@ -200,7 +211,10 @@ new Menu(
     '"Vegan" Menu',
     'The “Vegan” menu is a careful selection of ingredients: completely free from animal products, featuring almond, oat, coconut, or buckwheat milk, and an optimal amount of protein from tofu and imported vegetarian steaks.',
     15,
-    '.menu .container'
+    '.menu .container',
+    'menu__item'
 ).render()
+
+
 
 })
