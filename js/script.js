@@ -121,7 +121,7 @@ function modalClose(){
     });
 
 modalWindow.addEventListener('click', modalClose)
-  modalWindow.addEventListener('clisck', (e) =>{
+  modalWindow.addEventListener('click', (e) =>{
     if (e.target === modalWindow){
         modalClose()
     }  
@@ -132,7 +132,7 @@ document.addEventListener('keydown', (e) =>{
         modalClose()
     }
 })
-const modalTimerId =  setTimeout(modalOpen, 5000);
+// const modalTimerId =  setTimeout(modalOpen, 5000);
 
 function showModalByScroll() {
      if(window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1){
@@ -143,6 +143,64 @@ function showModalByScroll() {
 
 window.addEventListener('scroll',showModalByScroll)
 
+//class for cards
 
+
+class Menu {
+    constructor(src, alt, name, text, price, parentSelector){
+        this.src = src;
+        this.alt = alt;
+        this.name = name;
+        this.price = price;
+        this.text = text;
+        this.transfer = 42;
+        this.changeToUAH()
+        this.parent = document.querySelector(parentSelector)
+    }
+    changeToUAH(){
+        this.price = this.price * this.transfer
+    }
+
+    render(){
+        const a = document.createElement('div')
+        a.innerHTML = `<div class="menu__item">
+                    <img src=${this.src} alt=${this.alt}>
+                    <h3 class="menu__item-subtitle">${this.name}</h3>
+                    <div class="menu__item-descr">${this.text}</div>
+                    <div class="menu__item-divider"></div>
+                    <div class="menu__item-price">
+                        <div class="menu__item-cost">Price:</div>
+                        <div class="menu__item-total"><span>${this.price}</span> UAH/day</div>
+                    </div>`
+
+        this.parent.append(a)
+    }
+}
+
+
+new Menu(
+    "img/tabs/vegy.jpg",
+    "vegy",
+    '"Fitness" Menu',
+    'Fitness" menu is a new approach to cooking: more fresh vegetables and fruits. <br> A product for active and healthy people. A completely new offering with optimal price and high quality!',
+    9,
+    '.menu .container'
+).render()
+new Menu(
+    "img/tabs/elite.jpg",
+    "elite",
+    '"Premium" Menu',
+    'In the "Premium" menu we use not only beautiful packaging design, but also high-quality dish execution.<br> Red fish, seafood, fruits — restaurant-style menu without going to a restaurant!',
+    12,
+    '.menu .container'
+).render()
+new Menu(
+    "img/tabs/post.jpg",
+    "post",
+    '"Vegan" Menu',
+    'The “Vegan” menu is a careful selection of ingredients: completely free from animal products, featuring almond, oat, coconut, or buckwheat milk, and an optimal amount of protein from tofu and imported vegetarian steaks.',
+    15,
+    '.menu .container'
+).render()
 
 })
