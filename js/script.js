@@ -102,46 +102,48 @@ const modalWindow = document.querySelector('.modal')
 const contactBtn = document.querySelectorAll('[data-modal]')
 const closeBtn = document.querySelector('[data-close]')
 
-
-
-
-function modalOpen ()   {
+function modalOpen () {
     modalWindow.classList.add('show');
-    modalWindow.classList.remove('hide')
-    document.body.style.overflow = 'hidden'
-    clearInterval(modalTimerId) 
+    modalWindow.classList.remove('hide');
+    document.body.style.overflow = 'hidden';
+    clearInterval(modalTimerId); 
 } 
-function modalClose(){
+
+function modalClose() {
     modalWindow.classList.remove('show');
-    modalWindow.classList.add('hide')
-    document.body.style.overflow = '' 
+    modalWindow.classList.add('hide');
+    document.body.style.overflow = ''; 
 }
-    contactBtn.forEach(btn => {
-    btn.addEventListener('click', modalOpen)
-    });
 
-modalWindow.addEventListener('click', modalClose)
-  modalWindow.addEventListener('click', (e) =>{
-    if (e.target === modalWindow){
-        modalClose()
+contactBtn.forEach(btn => {
+    btn.addEventListener('click', modalOpen);
+});
+
+modalWindow.addEventListener('click', (e) => {
+    if (e.target === modalWindow || e.target === closeBtn) {
+        modalClose();
     }  
-})
+});
 
-document.addEventListener('keydown', (e) =>{
-    if(e.code === 'Escape' && modalWindow.classList.contains('show')){
-        modalClose()
+document.addEventListener('keydown', (e) => {
+    if(e.code === 'Escape' && modalWindow.classList.contains('show')) {
+        modalClose();
     }
-})
-// const modalTimerId =  setTimeout(modalOpen, 5000);
+});
+
+const modalTimerId = setTimeout(modalOpen, 5000);
 
 function showModalByScroll() {
-     if(window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1){
-        modalOpen()
-        window.removeEventListener('scroll',showModalByScroll)
+    if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1) {
+        modalOpen();
+        window.removeEventListener('scroll', showModalByScroll);
     }
 }
 
-window.addEventListener('scroll',showModalByScroll)
+window.addEventListener('scroll', showModalByScroll);
+
+
+
 
 //class for cards
 
@@ -214,6 +216,62 @@ new Menu(
     '.menu .container',
     'menu__item'
 ).render()
+
+//forms
+
+const forms = document.querySelectorAll('form');
+
+const massage = {
+    loading: 'LOADING',
+    success: 'THANKS, WE MASSAGE YOU',
+    failure: 'ERROR'
+}
+
+forms.forEach(item =>{
+    postData(item);
+})
+
+
+
+function postData(form){
+    form.addEventListener('submit', (e) =>{
+        e.preventDefault();
+
+        const statusMassage = document.createElement('div');
+        statusMassage.classList.add('status');
+        statusMassage.textContent = massage.loading;
+        form.append(statusMassage);
+
+        const request = new XMLHttpRequest();
+        request.open('POST', 'server.php');
+        request.setRequestHeader('Content-type', 'application/json');
+
+        const formData = new FormData(form);
+
+        const obj = {};
+        formData.forEach(function(value,key){
+            obj[key] = value;
+        })
+
+        const json = JSON.stringify(obj)
+        request.send(json);
+
+        request.addEventListener('load', () => {
+            if (request.status == 200){
+                console.log(request.response)
+                statusMassage.textContent = massage.success;
+                form.reset();
+                setTimeout(() =>{
+                    statusMassage.remove()
+                }, 2000)    
+            }else{
+                statusMassage.textContent = massage.failure;
+            }
+        })
+
+    })
+}
+
 
 
 
