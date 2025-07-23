@@ -100,7 +100,7 @@ setClock('.timer', deadLine)
 // Modal
 const modalWindow = document.querySelector('.modal')
 const contactBtn = document.querySelectorAll('[data-modal]')
-const closeBtn = document.querySelector('[data-close]')
+
 
 function modalOpen () {
     modalWindow.classList.add('show');
@@ -120,7 +120,7 @@ contactBtn.forEach(btn => {
 });
 
 modalWindow.addEventListener('click', (e) => {
-    if (e.target === modalWindow || e.target === closeBtn) {
+    if (e.target === modalWindow || e.target.getAttribute('data-close') == '' ) {
         modalClose();
     }  
 });
@@ -222,7 +222,7 @@ new Menu(
 const forms = document.querySelectorAll('form');
 
 const massage = {
-    loading: 'LOADING',
+    loading: 'img/form/spinner.svg',
     success: 'THANKS, WE MASSAGE YOU',
     failure: 'ERROR'
 }
@@ -237,9 +237,12 @@ function postData(form){
     form.addEventListener('submit', (e) =>{
         e.preventDefault();
 
-        const statusMassage = document.createElement('div');
-        statusMassage.classList.add('status');
-        statusMassage.textContent = massage.loading;
+        const statusMassage = document.createElement('img');
+        statusMassage.src = massage.loading;
+        statusMassage.style.cssText =`
+        display: block;
+        margin: 0 auto;
+        `
         form.append(statusMassage);
 
         const request = new XMLHttpRequest();
@@ -259,20 +262,46 @@ function postData(form){
         request.addEventListener('load', () => {
             if (request.status == 200){
                 console.log(request.response)
-                statusMassage.textContent = massage.success;
+                showThanksModel(massage.success);
                 form.reset();
-                setTimeout(() =>{
+                
                     statusMassage.remove()
-                }, 2000)    
+                  
             }else{
-                statusMassage.textContent = massage.failure;
+                showThanksModel(massage.failure);
             }
         })
 
     })
 }
 
+function showThanksModel(massage){
+    const prevModalDialog  = document.querySelector('.modal__dialog');
 
+    prevModalDialog.classList.add('hide')
+    modalOpen();
+
+
+    const thanksModal = document.createElement('div')
+    thanksModal.classList.add('modal__dialog')
+    thanksModal.innerHTML = `
+    <div class='modal__content' >
+    <div class='modal__close' data-close>×</div>
+    <div class='modal__title'>${massage}</div>
+    </div>
+    
+    `
+    document.querySelector('.modal').append(thanksModal)
+    setTimeout(() => {
+        thanksModal.remove();
+        prevModalDialog.classList.add('show')
+        prevModalDialog.classList.remove('hide')
+        modalClose();
+    }, 4000);
+
+
+
+}
 
 
 })
