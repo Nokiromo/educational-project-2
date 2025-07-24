@@ -243,11 +243,9 @@ function postData(form){
         display: block;
         margin: 0 auto;
         `
-        form.append(statusMassage);
+    
+        form.insertAdjacentElement('afterend', statusMassage);
 
-        const request = new XMLHttpRequest();
-        request.open('POST', 'server.php');
-        request.setRequestHeader('Content-type', 'application/json');
 
         const formData = new FormData(form);
 
@@ -256,20 +254,24 @@ function postData(form){
             obj[key] = value;
         })
 
-        const json = JSON.stringify(obj)
-        request.send(json);
+        
 
-        request.addEventListener('load', () => {
-            if (request.status == 200){
-                console.log(request.response)
+             fetch('server.ph1p',{
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(obj)
+        }).then(data => data.text())
+        .then(data =>{
+                console.log(data)
                 showThanksModel(massage.success);
                 form.reset();
-                
-                    statusMassage.remove()
-                  
-            }else{
-                showThanksModel(massage.failure);
-            }
+                statusMassage.remove()
+        }).catch(() =>{
+            showThanksModel(massage.failure);
+        }).finally(() =>{
+            form.reset();
         })
 
     })
@@ -298,10 +300,10 @@ function showThanksModel(massage){
         prevModalDialog.classList.remove('hide')
         modalClose();
     }, 4000);
-
-
-
 }
+
+
+
 
 
 })
