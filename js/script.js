@@ -189,33 +189,46 @@ class Menu {
 }
 
 
-new Menu(
-    "img/tabs/vegy.jpg",
-    "vegy",
-    '"Fitness" Menu',
-    'Fitness" menu is a new approach to cooking: more fresh vegetables and fruits. <br> A product for active and healthy people. A completely new offering with optimal price and high quality!',
-    9,
-    '.menu .container',
-   
-).render()
-new Menu(
-    "img/tabs/elite.jpg",
-    "elite",
-    '"Premium" Menu',
-    'In the "Premium" menu we use not only beautiful packaging design, but also high-quality dish execution.<br> Red fish, seafood, fruits — restaurant-style menu without going to a restaurant!',
-    12,
-    '.menu .container',
-    'menu__item'
-).render()
-new Menu(
-    "img/tabs/post.jpg",
-    "post",
-    '"Vegan" Menu',
-    'The “Vegan” menu is a careful selection of ingredients: completely free from animal products, featuring almond, oat, coconut, or buckwheat milk, and an optimal amount of protein from tofu and imported vegetarian steaks.',
-    15,
-    '.menu .container',
-    'menu__item'
-).render()
+const getResource = async (url) =>{
+    const result = await fetch(url);
+    if(!result.ok){
+       throw new Error(`Could not fetch ${url} status: ${result.status}`);
+    }
+    return await result.json();
+}
+
+getResource('http://localhost:3000/menu')
+    .then(data =>{
+        data.forEach(({src, alt, name, text, price}) =>{
+            new Menu(src, alt, name, text, price, '.menu .container').render()
+        })
+    })
+
+// getResource('http://localhost:3000/menu')
+//     .then(data => createCart(data))
+
+//     function createCart(data){
+//         data.forEach(({src, alt, name, text, price}) => {
+//             const element = document.createElement('div')
+
+//             element.classList.add('menu__item')
+//             element.innerHTML =`
+//                 <img src=${src} alt=${alt}>
+//                     <h3 class="menu__item-subtitle">${name}</h3>
+//                     <div class="menu__item-descr">${text}</div>
+//                     <div class="menu__item-divider"></div>
+//                     <div class="menu__item-price">
+//                         <div class="menu__item-cost">Price:</div>
+//                         <div class="menu__item-total"><span>${price}</span> UAH/day</div>
+//                      </div>
+//             ` 
+//             document.querySelector('.menu .container').append(element)
+//         })
+       
+//     }
+
+
+
 
 //forms
 
@@ -228,12 +241,22 @@ const massage = {
 }
 
 forms.forEach(item =>{
-    postData(item);
+    bindPostData(item);
 })
 
+const postData = async (url, data) =>{
+    const result = await fetch(url,{
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: data
+    })
+    return await result.json();
+}
 
 
-function postData(form){
+function bindPostData(form){
     form.addEventListener('submit', (e) =>{
         e.preventDefault();
 
@@ -249,20 +272,9 @@ function postData(form){
 
         const formData = new FormData(form);
 
-        const obj = {};
-        formData.forEach(function(value,key){
-            obj[key] = value;
-        })
-
+        const json = JSON.stringify(Object.fromEntries(formData.entries()))
         
-
-             fetch('server.ph1p',{
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            body: JSON.stringify(obj)
-        }).then(data => data.text())
+        postData('http://localhost:3000/requests', json)
         .then(data =>{
                 console.log(data)
                 showThanksModel(massage.success);
@@ -302,9 +314,7 @@ function showThanksModel(massage){
     }, 4000);
 }
 
-fetch('http://localhost:3000/menu')
-.then(data =>data.json())
-.then(res => console.log(res))
+
 
 
 
