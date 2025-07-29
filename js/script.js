@@ -197,9 +197,17 @@ const getResource = async (url) =>{
     return await result.json();
 }
 
-getResource('http://localhost:3000/menu')
-    .then(data =>{
-        data.forEach(({src, alt, name, text, price}) =>{
+// getResource('http://localhost:3000/menu')
+    // .then(data =>{
+    //     data.forEach(({src, alt, name, text, price}) =>{
+    //         new Menu(src, alt, name, text, price, '.menu .container').render()
+    //     })
+    // })
+
+
+axios.get('http://localhost:3000/menu')
+        .then(data =>{
+        data.data.forEach(({src, alt, name, text, price}) =>{
             new Menu(src, alt, name, text, price, '.menu .container').render()
         })
     })
@@ -314,8 +322,56 @@ function showThanksModel(massage){
     }, 4000);
 }
 
+//slider
+
+const current =  document.querySelector('#current')
+const total =  document.querySelector('#total')
+const prev = document.querySelector('.offer__slider-prev')
+const next = document.querySelector('.offer__slider-next')
+const slides = document.querySelectorAll('.offer__slide')
 
 
+let index = 1;
+showslider(index)
+
+if(slides.length < 10){
+    total.textContent = `0${slides.length}`
+}else{
+    total.textContent = slides.length
+}
+
+
+
+prev.addEventListener('click', () =>{
+    plusSlider(-1)
+})
+next.addEventListener('click', () =>{
+    plusSlider(1)
+})
+
+function showslider(n){
+    if(n > slides.length){
+        index =  1;
+    }
+
+    if(n < 1){
+        index = slides.length
+    }
+    
+    slides.forEach(item => item.style.display = 'none')
+    slides[index - 1].style.display = 'block'
+
+    if(slides.length < 10){
+            current.textContent = `0${index}`
+    }
+    else{
+            current.textContent = index
+        }
+}
+
+function plusSlider(n){
+    showslider(index += n)
+}
 
 
 })
