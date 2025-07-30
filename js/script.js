@@ -4,6 +4,7 @@ window.addEventListener('DOMContentLoaded', () =>{
     const tabs = document.querySelectorAll(".tabheader__item"); 
     const tabContent = document.querySelectorAll(".tabcontent");
     const tabsParent = document.querySelector(".tabheader__items");
+    
 
     function hideTubContent(){
         tabContent.forEach(item =>{
@@ -21,6 +22,8 @@ window.addEventListener('DOMContentLoaded', () =>{
         tabContent[i].classList.remove('hide')
         tabs[i].classList.add('tabheader__item_active')
     }
+    hideTubContent();
+	showTabContent();
 
     tabsParent.addEventListener('click', (event) =>{
         const target = event.target;
@@ -329,49 +332,78 @@ const total =  document.querySelector('#total')
 const prev = document.querySelector('.offer__slider-prev')
 const next = document.querySelector('.offer__slider-next')
 const slides = document.querySelectorAll('.offer__slide')
-
-
+const wrapper = document.querySelector('.offer__slider-wrapper')
+const slidsField = document.querySelector('.ofer__slider-inner')
+const width = window.getComputedStyle(wrapper).width
 let index = 1;
-showslider(index)
+let ofset = 0
 
 if(slides.length < 10){
     total.textContent = `0${slides.length}`
+    current.textContent = `0${index}`
 }else{
     total.textContent = slides.length
+    current.textContent = index
 }
 
 
+slidsField.style.width = 100 * slides.length + '%';
+slidsField.style.display = 'flex';
+slidsField.style.transition = '0.5s all';
 
-prev.addEventListener('click', () =>{
-    plusSlider(-1)
+wrapper.style.overflow = 'hidden'
+
+slides.forEach(e =>{
+    e.style.width = width;
 })
+
+
+
+
 next.addEventListener('click', () =>{
-    plusSlider(1)
-})
-
-function showslider(n){
-    if(n > slides.length){
-        index =  1;
-    }
-
-    if(n < 1){
-        index = slides.length
-    }
-    
-    slides.forEach(item => item.style.display = 'none')
-    slides[index - 1].style.display = 'block'
-
-    if(slides.length < 10){
-            current.textContent = `0${index}`
+    if(ofset == +width.slice(0, width.length - 2) * (slides.length - 1)){
+        ofset = 0
     }
     else{
-            current.textContent = index
-        }
-}
+        ofset += +width.slice(0, width.length - 2)
+    }
+    slidsField.style.transform = `translateX(-${ofset}px)`
 
-function plusSlider(n){
-    showslider(index += n)
-}
+    if(index == slides.length){
+        index = 1
+    }else{
+        index++
+    }
+
+    if(slides.length < 10){
+        current.textContent = `0${index}`
+    }else{
+        current.textContent = index
+    }
+})
+
+prev.addEventListener('click', () =>{
+    if(ofset == 0){
+        ofset = +width.slice(0, width.length - 2) * (slides.length - 1)
+    }
+    else{
+        ofset -= +width.slice(0, width.length - 2)
+    }
+    slidsField.style.transform = `translateX(-${ofset}px)`
+
+    if(index == 1){
+        index = slides.length
+    }else{
+        index--
+    }
+
+    if(slides.length < 10){
+        current.textContent = `0${index}`
+    }else{
+        current.textContent = index
+    }
+})
+
 
 
 })
